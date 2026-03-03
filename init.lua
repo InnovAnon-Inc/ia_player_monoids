@@ -54,6 +54,7 @@ player_monoids.make_monoid = function(def)
 
 	setmetatable(mon, mon_meta)
 
+	-- TODO expose
 	-- Clear out data when player leaves
 	minetest.register_on_leaveplayer(function(player)
 		local p_name = player:get_player_name()
@@ -286,14 +287,15 @@ function mon_meta:delete_branch(player, branch_name)
 	return true
 end
 
-minetest.register_on_joinplayer(function(player)
+player_monoids.on_joinplayer = function(player)
 	local p_name = player:get_player_name()
 	for _, monoid in pairs(player_monoids) do
 		if type(monoid) == "table" and monoid._get_player_data then
 			monoid:_get_player_data(p_name)
 		end
 	end
-end)
+end
+minetest.register_on_joinplayer(player_monoids.on_joinplayer)
 
 function mon_meta:value(player, branch_name)
 	local p_name = player:get_player_name()
